@@ -1,1 +1,40 @@
+--- data in viwe from silver folder
 
+create SCHEMA golddd
+
+create view golddd.finalll
+as
+SELECT
+     *
+FROM
+    OPENROWSET(
+        BULK 'https://olistdatastorageaccnsk.blob.core.windows.net/olistdata/silver/',
+        FORMAT = 'parquet'
+    ) AS [result]
+
+select * from goldd.finall
+
+---
+---CREATE MASTER KEY ENCRYPTION BY PASSWORD = '<password>';
+
+---CREATE DATABASE SCOPED CREDENTIAL [<id>] WITH IDENTITY = 'Managed Identity';
+
+---select * from sys.database_credentials
+
+CREATE EXTERNAL FILE FORMAT extfileformat WITH (
+    FORMAT_TYPE = PARQUET,
+    DATA_COMPRESSION = 'org.apache.hadoop.io.compress.SnappyCodec'
+);
+
+CREATE EXTERNAL DATA SOURCE goldlayer WITH (
+    LOCATION = 'https://<olistdatastorageacc>.dfs.core.windows.net/olistdata/gold/',
+    CREDENTIAL = nskadmin
+);
+
+
+CREATE EXTERNAL TABLE golddd.finaltable WITH (
+        LOCATION = 'serving',
+        DATA_SOURCE = goldlayer,
+        FILE_FORMAT = extfileformat
+) AS
+SELECT * FROM golddd.finalll2;
